@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  IgnorableNamespaces="uap mp">
+
+  <Identity
+    Name="VisitorSignInSystem.Agent"
+    Publisher="CN=CAPEGREG"
+    Version="1.0.50.0" />
+
+  <mp:PhoneIdentity PhoneProductId="0143db74-53c0-4954-acb9-27ac292b0ee7" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+
+  <Properties>
+    <DisplayName>CAPEGREG VSIS Agent</DisplayName>
+    <PublisherDisplayName>CAPEGREG VSIS Agent</PublisherDisplayName>
+    <Logo>Assets\PackageLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="VisitorSignInSystem.Agent.App">
+      <uap:VisualElements
+        DisplayName="Visitor System Agent"
+        Description="Visitor Sign In System Agent Windows Universal Application."
+        BackgroundColor="white" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\AppIcon.png">
+        <uap:DefaultTile ShortName="VSIS Agent" Square71x71Logo="Assets\SmallTile.png" Wide310x150Logo="Assets\WideTile.png" Square310x310Logo="Assets\LargeTile.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile >
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
+        <uap:SplashScreen Image="Assets\SplashScreen.png"/>
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <uap:Capability Name="userAccountInformation"/>
+  </Capabilities>
+</Package>
