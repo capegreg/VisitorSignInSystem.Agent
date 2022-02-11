@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppInstaller
+	xmlns="http://schemas.microsoft.com/appx/appinstaller/2018"
+	Version="{Version}"
+	Uri="{AppInstallerUri}">
+
+	<MainBundle Name="{Name}"
+				Version="{Version}"
+				Publisher="{Publisher}"
+				Uri="{MainPackageUri}"/>
+
+	<UpdateSettings>
+		<OnLaunch
+            HoursBetweenUpdateChecks="0"
+            UpdateBlocksActivation="true"
+            ShowPrompt="true" />
+		<AutomaticBackgroundTask />
+		<ForceUpdateFromAnyVersion>true</ForceUpdateFromAnyVersion>
+	</UpdateSettings>
+
+</AppInstaller>

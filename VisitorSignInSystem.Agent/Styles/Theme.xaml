@@ -1,0 +1,19 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:VisitorSignInSystem.Agent">
+
+
+    <ResourceDictionary x:Key="Light">
+        <SolidColorBrush x:Key="PaoBackgroundThemeBrush" Color="White" />
+        <SolidColorBrush x:Key="PaoForegroundThemeBrush" Color="Black" />
+        <SolidColorBrush x:Key="PaoForegroundContentVisitorThemeBrush" Color="White" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+        <SolidColorBrush x:Key="PaoBackgroundThemeBrush" Color="Black" />
+        <SolidColorBrush x:Key="PaoForegroundThemeBrush" Color="White" />
+        <SolidColorBrush x:Key="PaoForegroundContentVisitorThemeBrush" Color="White" />
+    </ResourceDictionary>
+
+</ResourceDictionary>
+

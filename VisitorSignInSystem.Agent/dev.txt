@@ -1,0 +1,13 @@
+﻿
+
+icon left side
+
+<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal"  >
+    <Button Name="StartCall" Padding="10" Tapped="StartCall_Tapped" Tag="Call" IsEnabled="True" >
+        <StackPanel Orientation="Horizontal">
+            <SymbolIcon Symbol="People"/>
+            <TextBlock Text="Start Call" Margin="6,0,6,0"/>
+        </StackPanel>
+    </Button>
+</StackPanel>
+

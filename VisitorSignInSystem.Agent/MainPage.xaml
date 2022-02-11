@@ -1,0 +1,1249 @@
+﻿<Page
+    x:Class="VisitorSignInSystem.Agent.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:VisitorSignInSystem.Agent"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="using:VisitorSignInSystem.Models"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
+    Name="AppUI"
+    d:DesignHeight="585"
+    d:DesignWidth="565"
+    local:AgentDependencyClass.CallDuration=""
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="Page_Loaded"
+    NavigationCacheMode="Enabled"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="ImageOverlayTemplate" x:DataType="model:Counter">
+            <Grid Margin="4,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Image
+                    Width="26"
+                    Height="26"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Source="{x:Bind Icon}"
+                    Stretch="UniformToFill" />
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource CountersGridViewTextBlockStyle}"
+                    Text="{x:Bind Description}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TransferReasonsListViewTemplate" x:DataType="model:Transfer">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image
+                    Grid.Column="0"
+                    Height="25"
+                    Margin="0,0,10,0"
+                    Source="{x:Bind Icon, Mode=OneTime}"
+                    Stretch="Uniform" />
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="0"
+                    x:Phase="1"
+                    FontSize="16"
+                    Text="{x:Bind Description}" />
+            </Grid>
+        </DataTemplate>
+        <Storyboard x:Name="settingsStoryBoard">
+            <DoubleAnimation
+                AutoReverse="True"
+                RepeatBehavior="Forever"
+                Storyboard.TargetName="Settings"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)"
+                From="0"
+                To="15"
+                Duration="0:0:0.1" />
+        </Storyboard>
+        <Storyboard x:Name="NoticesTextBlockStoryboard">
+            <DoubleAnimationUsingKeyFrames
+                RepeatBehavior="1x"
+                Storyboard.TargetName="NoticesTextBlock"
+                Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0.4" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="0.6" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0.8" />
+                <EasingDoubleKeyFrame KeyTime="0:0:6" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:7" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="NoticesTextBlockStoryboardVisible">
+            <DoubleAnimationUsingKeyFrames
+                RepeatBehavior="1x"
+                Storyboard.TargetName="NoticesTextBlock"
+                Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+    </Page.Resources>
+
+    <Grid x:Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="12" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="15" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="22" />
+            <RowDefinition Height="0" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="2"
+            Margin="0,0,0,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel>
+                    <Button
+                        Name="stepButton"
+                        Height="38"
+                        MinWidth="161"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        ui:FrameworkElementExtensions.Cursor="Hand"
+                        Background="{StaticResource PaoSolidColorBrushIvory}"
+                        BorderBrush="{StaticResource PaoSolidColorBrushNorthernBlue}"
+                        BorderThickness="2"
+                        Content="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.ButtonStepText)}"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Foreground="{StaticResource PaoSolidColorBrushNorthernBlue}"
+                        IsDoubleTapEnabled="False"
+                        IsEnabled="False"
+                        IsHoldingEnabled="False"
+                        IsRightTapEnabled="False"
+                        Style="{StaticResource ButtonStyle1}"
+                        Tapped="stepButton_Tapped" />
+                </StackPanel>
+                <StackPanel Margin="5,0,0,0">
+                    <muxc:SplitButton
+                        x:Name="TransferButton"
+                        MinWidth="0"
+                        MinHeight="38"
+                        Padding="0"
+                        VerticalAlignment="Top"
+                        AutomationProperties.Name="Font color"
+                        Background="{ThemeResource ButtonBackgroundDisabled}"
+                        BorderBrush="{ThemeResource ButtonBorderBrushDisabled}"
+                        BorderThickness="2"
+                        IsDoubleTapEnabled="False"
+                        IsEnabled="False"
+                        IsHoldingEnabled="False"
+                        IsRightTapEnabled="False"
+                        Visibility="Visible">
+                        <TextBlock
+                            x:Name="TransferButtonText"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            FontSize="24"
+                            Foreground="{ThemeResource ButtonBorderBrushDisabled}"
+                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.TransferButtonText)}" />
+                        <muxc:SplitButton.Flyout>
+                            <Flyout Placement="Bottom">
+                                <ListView
+                                    x:Name="TransferReasons"
+                                    HorizontalAlignment="Left"
+                                    ItemTemplate="{StaticResource TransferReasonsListViewTemplate}"
+                                    ItemsSource="{x:Bind Transfers, Mode=OneWay}"
+                                    SelectionMode="Single"
+                                    Tapped="TransferReasons_Tapped" />
+                            </Flyout>
+                        </muxc:SplitButton.Flyout>
+                    </muxc:SplitButton>
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    Grid.ColumnSpan="4"
+                    Margin="15,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Orientation="Vertical">
+                    <StackPanel
+                        Name="stackQueueStatusBlock"
+                        Grid.Row="1"
+                        Grid.Column="3"
+                        Margin="0,0,0,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Tapped="stackQueueStatusBlock_Tapped">
+                        <TextBlock
+                            Name="QueueStatusText"
+                            Style="{StaticResource TextBlockStyleHeaderCaption}"
+                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.QueueStatusText)}" />
+                    </StackPanel>
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="3"
+                        Margin="0,0,0,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center">
+                        <TextBlock
+                            Name="CountersAvailableText"
+                            FontSize="15"
+                            Foreground="{StaticResource PaoSolidColorBrushBrick}"
+                            Style="{StaticResource TextBlockStyleHeaderCaption}"
+                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.CountersAvailableText)}" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="0,0,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
+            <StackPanel
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="10,0,0,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <TextBlock
+                    x:Name="CounterIdentityBlock"
+                    Style="{StaticResource TextBlockStyleHeaderCaption}"
+                    Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.CounterIdentityBlock)}" />
+                <TextBlock
+                    x:Name="DurationValue"
+                    Style="{StaticResource TextBlockStyleHeaderCaption}"
+                    Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.CallDuration)}"
+                    Visibility="Visible" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="4"
+            Margin="0,10,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Orientation="Horizontal" />
+        <StackPanel
+            Grid.Row="4"
+            Grid.Column="1"
+            Grid.ColumnSpan="4"
+            Margin="0"
+            VerticalAlignment="Top"
+            Background="{StaticResource PaoSolidColorBrushOldBlue}"
+            BorderBrush="{StaticResource PaoSolidColorBrushChar}"
+            BorderThickness="1"
+            CornerRadius="8"
+            Orientation="Vertical"
+            Visibility="Visible">
+            <StackPanel
+                Name="stackContentVisitor"
+                Grid.Row="4"
+                Grid.Column="1"
+                Grid.ColumnSpan="4"
+                Margin="0,0,0,0"
+                VerticalAlignment="Top"
+                Background="{StaticResource PaoSolidColorBrushDisabled}"
+                BorderBrush="{StaticResource PaoSolidColorBrushChar}"
+                BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="26" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="0"
+                        Margin="8,4,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Orientation="Vertical">
+                        <StackPanel
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="0,0,0,0"
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Foreground="{StaticResource PaoSolidColorBrushWhite}"
+                                Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.VisitorFullName)}"
+                                TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <StackPanel
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="0,0,0,5"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                x:Name="AssignedCounterLabel"
+                                FontSize="15"
+                                FontWeight="SemiBold"
+                                Foreground="{StaticResource PaoSolidColorBrushWhite}"
+                                Text="Assigned counter:"
+                                Visibility="Collapsed" />
+                            <TextBlock
+                                Margin="5,0,0,0"
+                                FontSize="15"
+                                FontWeight="SemiBold"
+                                Foreground="{StaticResource PaoSolidColorBrushWhite}"
+                                Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.AssignedCounterDesc)}"
+                                ToolTipService.ToolTip="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.AssignedCounterDesc)}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="1"
+                        Margin="10,4,0,4"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Stretch"
+                        BorderBrush="{StaticResource PaoSolidColorBrushWhite}"
+                        BorderThickness="1,0,0,0"
+                        Orientation="Vertical">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top">
+                                <TextBlock
+                                    x:Name="ReasonForVisitLabel"
+                                    FontSize="16"
+                                    FontWeight="SemiBold"
+                                    Foreground="{StaticResource PaoSolidColorBrushWhite}"
+                                    Text="Reason for visit:"
+                                    Visibility="Collapsed" />
+                            </StackPanel>
+                            <StackPanel
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top">
+                                <TextBlock
+                                    Margin="0,0,0,0"
+                                    FontSize="16"
+                                    FontWeight="SemiBold"
+                                    Foreground="{StaticResource PaoSolidColorBrushWhite}"
+                                    Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.VisitorReasonText)}"
+                                    TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel
+            Name="stackContentCounters"
+            Grid.Row="5"
+            Grid.Column="1"
+            Grid.ColumnSpan="4"
+            Margin="10,15,10,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            Visibility="Collapsed">
+            <GridView
+                Name="CountersGridView"
+                FlowDirection="LeftToRight"
+                IsDoubleTapEnabled="False"
+                IsHoldingEnabled="False"
+                IsItemClickEnabled="True"
+                IsRightTapEnabled="False"
+                ItemClick="CountersGridView_ItemClick"
+                ItemTemplate="{StaticResource ImageOverlayTemplate}"
+                SelectionMode="Single"
+                Visibility="Visible">
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="Margin" Value="1" />
+                    </Style>
+                </GridView.ItemContainerStyle>
+                <!--
+                    An extra property also needs to be added to the GridView's ItemsWrapGrid.
+                    The following sets the maximum # of items to show before wrapping.
+                -->
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid
+                            x:Name="MaxItemsWrapGrid"
+                            MaximumRowsOrColumns="3"
+                            Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+            </GridView>
+        </StackPanel>
+        <StackPanel
+            Name="stackContentStats"
+            Grid.Row="5"
+            Grid.Column="1"
+            Grid.ColumnSpan="4"
+            Height="Auto"
+            Margin="0,0,0,12"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.ColumnSpan="3">
+                    <TextBlock
+                        Margin="10,10,0,0"
+                        FontSize="18"
+                        Foreground="{StaticResource PaoSolidColorBrushBlue}"
+                        Text="Agent Statistics" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.ColumnSpan="3"
+                    Margin="0,8,0,0"
+                    Padding="4"
+                    HorizontalAlignment="Stretch"
+                    BorderBrush="{StaticResource PaoSolidColorBrushBlack}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Orientation="Horizontal">
+                    <StackPanel
+                        Margin="10,2,0,0"
+                        Padding="2"
+                        Orientation="Horizontal">
+                        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <TextBlock
+                                Margin="0"
+                                FontSize="18"
+                                Foreground="{StaticResource PaoSolidColorBrushTealGreen}"
+                                Text="Visitors Taken:" />
+                            <StackPanel
+                                Margin="5,5,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Orientation="Vertical">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource TextBlockStyleStatistics}" Text="TODAY:" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            x:Name="VisitorsByToday"
+                                            Style="{StaticResource TextBlockStyleStatistics}"
+                                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.VisitorsByTodayText)}" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource TextBlockStyleStatistics}" Text="WTD:" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            x:Name="VisitorsByWTD"
+                                            Style="{StaticResource TextBlockStyleStatistics}"
+                                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.VisitorsByWTDText)}" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource TextBlockStyleStatistics}" Text="MTD:" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            x:Name="VisitorsByMTD"
+                                            Style="{StaticResource TextBlockStyleStatistics}"
+                                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.VisitorsByMTDText)}" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource TextBlockStyleStatistics}" Text="YTD:" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            x:Name="VisitorsByYTD"
+                                            Style="{StaticResource TextBlockStyleStatistics}"
+                                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.VisitorsByYTDText)}" />
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel
+                            Grid.Column="2"
+                            Margin="55,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
+                            <TextBlock
+                                Margin="0"
+                                FontSize="18"
+                                Foreground="{StaticResource PaoSolidColorBrushTealGreen}"
+                                Text="Total Time with Visitors:" />
+                            <StackPanel
+                                Margin="5,5,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Orientation="Vertical">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource TextBlockStyleStatistics}" Text="TODAY:" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            x:Name="TimeByToday"
+                                            Style="{StaticResource TextBlockStyleStatistics}"
+                                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.CallTimeByTodayText)}" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource TextBlockStyleStatistics}" Text="WTD:" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            x:Name="TimeByWTD"
+                                            Style="{StaticResource TextBlockStyleStatistics}"
+                                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.CallTimeByWTDText)}" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource TextBlockStyleStatistics}" Text="MTD:" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            x:Name="TimeByMTD"
+                                            Style="{StaticResource TextBlockStyleStatistics}"
+                                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.CallTimeByMTDText)}" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource TextBlockStyleStatistics}" Text="YTD:" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            x:Name="TimeByYTD"
+                                            Style="{StaticResource TextBlockStyleStatistics}"
+                                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.CallTimeByYTDText)}" />
+                                    </StackPanel>
+                                </Grid>
+                                <TextBlock
+                                    Margin="0"
+                                    FontSize="13"
+                                    Foreground="{StaticResource PaoSolidColorBrushRedEnamel}"
+                                    Text="(Time format hh:mm:ss)" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <StackPanel
+            Name="stackAppSettings"
+            Grid.Row="5"
+            Grid.Column="1"
+            Grid.ColumnSpan="4"
+            Margin="0,2,0,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.ColumnSpan="2">
+                    <TextBlock
+                        Margin="10,10,0,0"
+                        FontSize="20"
+                        Foreground="{StaticResource PaoSolidColorBrushTealGreen}"
+                        Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.SettingsTitleText)}" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Margin="2,8,2,0"
+                    Padding="4"
+                    HorizontalAlignment="Stretch"
+                    BorderBrush="{StaticResource PaoSolidColorBrushBlack}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Orientation="Horizontal">
+                    <StackPanel
+                        Margin="5,0,5,10"
+                        Padding="0"
+                        HorizontalAlignment="Stretch">
+                        <StackPanel
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Top"
+                            Orientation="Vertical">
+                            <StackPanel
+                                Margin="0,0,0,4"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top">
+                                <TextBox
+                                    x:Name="AppHost"
+                                    Width="235"
+                                    Height="60"
+                                    BorderThickness="0"
+                                    Header="Host:"
+                                    PlaceholderText="Host"
+                                    Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.AppHostText)}"
+                                    ToolTipService.ToolTip="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.AppHostText)}" />
+                            </StackPanel>
+                            <StackPanel Margin="4,0,0,0">
+                                <TextBlock
+                                    Margin="0"
+                                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                    Style="{StaticResource TextBlockItalicStyleCaption}"
+                                    Text="Ex. http://mydomain.com/vsisHub"
+                                    TextAlignment="Left" />
+                                <TextBlock
+                                    Margin="0"
+                                    Foreground="{StaticResource PaoSolidColorBrushBrick}"
+                                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                    Style="{StaticResource TextBlockStyleCaption}"
+                                    Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.HostAlertText)}"
+                                    TextAlignment="Left" />
+                            </StackPanel>
+                            <StackPanel Width="Auto" Margin="0,20,0,4">
+                                <ComboBox
+                                    x:Name="LocationPicker"
+                                    Width="235"
+                                    Height="60"
+                                    Margin="0"
+                                    HorizontalAlignment="Left"
+                                    BorderThickness="0"
+                                    DisplayMemberPath="Description"
+                                    Header="Locations:"
+                                    ItemsSource="{x:Bind Locations, Mode=OneTime}"
+                                    PlaceholderText="Locations"
+                                    SelectionChanged="LocationPicker_SelectionChanged"
+                                    TabIndex="1" />
+                            </StackPanel>
+                            <StackPanel Margin="4,0,0,0">
+                                <TextBlock
+                                    Margin="0"
+                                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                    Style="{StaticResource TextBlockItalicStyleCaption}"
+                                    Text="Set to office location"
+                                    TextAlignment="Left" />
+                                <TextBlock
+                                    Margin="0"
+                                    Foreground="{StaticResource PaoSolidColorBrushBrick}"
+                                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                    Style="{StaticResource TextBlockStyleCaption}"
+                                    Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.LocationAlertText)}"
+                                    TextAlignment="Left" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="1,0,0,0"
+                        Padding="0"
+                        HorizontalAlignment="Stretch"
+                        BorderBrush="{StaticResource PaoSolidColorBrushDisabled}"
+                        BorderThickness="1,0,0,0">
+                        <StackPanel
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Top"
+                            Orientation="Vertical">
+                            <StackPanel Margin="0,0,0,0" HorizontalAlignment="Left">
+                                <ComboBox
+                                    x:Name="CounterPicker"
+                                    Width="235"
+                                    Height="60"
+                                    Margin="0"
+                                    HorizontalAlignment="Left"
+                                    BorderThickness="0"
+                                    DisplayMemberPath="Description"
+                                    Header="Counters:"
+                                    ItemsSource="{x:Bind Counters, Mode=OneWay}"
+                                    PlaceholderText="Counters"
+                                    SelectionChanged="CounterPicker_SelectionChanged" />
+                                <StackPanel Margin="4,4,0,0">
+                                    <TextBlock
+                                        Margin="0"
+                                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                        Style="{StaticResource TextBlockItalicStyleCaption}"
+                                        Text="Leave unselected if not a counter"
+                                        TextAlignment="Left" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel Name="stackCounterName" Margin="4,4,0,0">
+                                        <Image
+                                            x:Name="CounterNameIcon"
+                                            Width="14"
+                                            Height="14"
+                                            Margin="0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Stretch="UniformToFill" />
+                                    </StackPanel>
+                                    <StackPanel Margin="4,3,0,0">
+                                        <TextBlock
+                                            x:Name="CounterNameText"
+                                            Width="Auto"
+                                            MinWidth="230"
+                                            Margin="0"
+                                            Foreground="{StaticResource PaoSolidColorBrushSteelBlue}"
+                                            Style="{StaticResource TextBlockStyleCaption}"
+                                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.CounterNameText)}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel x:Name="stackAgentName" Margin="0,15,0,4">
+                                <ComboBox
+                                    x:Name="AgentPicker"
+                                    Width="235"
+                                    Height="60"
+                                    Margin="0"
+                                    HorizontalAlignment="Left"
+                                    BorderThickness="0"
+                                    DisplayMemberPath="FullName"
+                                    Header="Agents:"
+                                    ItemsSource="{x:Bind AgentUser, Mode=OneWay}"
+                                    PlaceholderText="Agents"
+                                    SelectionChanged="AgentPicker_SelectionChanged" />
+                            </StackPanel>
+                            <StackPanel Margin="4,0,0,0">
+                                <TextBlock
+                                    Margin="0"
+                                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                    Style="{StaticResource TextBlockItalicStyleCaption}"
+                                    Text="Leave unselected if not a counter"
+                                    TextAlignment="Left" />
+                                <TextBlock
+                                    Margin="0"
+                                    Foreground="{StaticResource PaoSolidColorBrushBrick}"
+                                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                    Style="{StaticResource TextBlockStyleCaption}"
+                                    Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.AgentNameAlertText)}"
+                                    TextAlignment="Left" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel
+                    x:Name="stackOptions"
+                    Grid.Row="2"
+                    Grid.ColumnSpan="2"
+                    Margin="2,8,2,0"
+                    Padding="4"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    BorderBrush="{StaticResource PaoSolidColorBrushBlack}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Orientation="Vertical">
+                    <StackPanel
+                        Height="70"
+                        Margin="0"
+                        Padding="4">
+                        <StackPanel Margin="0" Orientation="Horizontal">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Margin="0"
+                                    HorizontalAlignment="Left">
+                                    <Button
+                                        x:Name="RefreshConnection"
+                                        ui:FrameworkElementExtensions.Cursor="Hand"
+                                        Content="Refresh Connection"
+                                        Style="{StaticResource ButtonStyle1}"
+                                        Tapped="RefreshConnection_Tapped" />
+                                </StackPanel>
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="25,0,15,0"
+                                    HorizontalAlignment="Right">
+                                    <ToggleSwitch
+                                        x:Name="ToggleSaved"
+                                        Header="Save Configuration"
+                                        IsOn="False"
+                                        OffContent=""
+                                        OnContent="Saved"
+                                        Toggled="ToggleSaved_Toggled" />
+                                </StackPanel>
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Grid.Column="2"
+                                    Margin="0,0,15,0"
+                                    HorizontalAlignment="Right" />
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel Margin="10,8,0,0" HorizontalAlignment="Left">
+                            <TextBlock
+                                Name="SettingsInstructions"
+                                Width="360"
+                                Margin="0"
+                                Foreground="{StaticResource PaoSolidColorBrushBrick}"
+                                Style="{StaticResource TextBlockStyleCaption}"
+                                Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.SettingsInstructionsText)}"
+                                TextTrimming="WordEllipsis"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel
+                        Margin="0,10,4,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+                        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                            <TextBlock
+                                x:Name="VersionText"
+                                Padding="0"
+                                FontSize="11"
+                                Foreground="{StaticResource PaoSolidColorBrushDarkGreen}"
+                                Text="MCPAO" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <StackPanel
+            Grid.Row="5"
+            Grid.Column="1"
+            Grid.ColumnSpan="4"
+            Margin="20,0,0,20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+            <muxc:InfoBar x:Name="InfoBarNotice" Width="Auto" />
+        </StackPanel>
+        <StackPanel
+            x:Name="stackNotices"
+            Grid.Row="5"
+            Grid.Column="1"
+            Grid.ColumnSpan="4"
+            Margin="0"
+            VerticalAlignment="Bottom"
+            Background="{StaticResource PaoSolidColorBrushLightYellow}"
+            BorderBrush="{StaticResource PaoSolidColorBrushBrick}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Visibility="Collapsed">
+
+            <StackPanel
+                Grid.Row="5"
+                Grid.Column="1"
+                Grid.ColumnSpan="4"
+                Margin="4"
+                VerticalAlignment="Bottom"
+                Visibility="Visible">
+                <StackPanel
+                    x:Name="NoticesTextBlock"
+                    Margin="0,0,0,0"
+                    Padding="2"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        x:Name="NoticesTextGlyph"
+                        Margin="3,3,6,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        FontSize="18"
+                        Foreground="{StaticResource PaoSolidColorBrushBrick}"
+                        Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.NoticesTextGlyph)}" />
+                    <TextBlock
+                        Name="NoticesText"
+                        MaxWidth="500"
+                        Margin="0"
+                        FontSize="18"
+                        Foreground="{StaticResource PaoSolidColorBrushBrick}"
+                        Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.NoticesText)}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel
+            Grid.Row="5"
+            Grid.Column="1"
+            Margin="10,0,0,5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            Orientation="Horizontal">
+            <TextBlock
+                Name="VisitorStatusText"
+                Margin="0"
+                FontSize="16"
+                Foreground="{StaticResource PaoSolidColorBrushBrick}"
+                Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.VisitorStatusText)}" />
+        </StackPanel>
+        <StackPanel
+            Grid.Row="6"
+            Grid.Column="1"
+            Grid.ColumnSpan="4"
+            Margin="0,10,0,5"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            Orientation="Vertical">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+
+                <Border
+                    Grid.ColumnSpan="5"
+                    BorderBrush="{StaticResource PaoSolidColorBrushBlack}"
+                    BorderThickness="0,1,0,0" />
+
+                <!--  0  -->
+                <StackPanel
+                    Grid.Column="0"
+                    Margin="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    ui:FrameworkElementExtensions.Cursor="Hand"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        x:Name="Settings"
+                        Margin="5,3,1,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        FontSize="18"
+                        Tapped="Settings_Tapped"
+                        Text="&#xE115;">
+                        <TextBlock.RenderTransform>
+                            <CompositeTransform CenterX="9" CenterY="9" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                    <StackPanel
+                        x:Name="stackAuthAgentText"
+                        Margin="8,3,0,0"
+                        Background="{StaticResource PaoSolidColorBrushLemon}"
+                        BorderBrush="{StaticResource PaoSolidColorBrushDarkGreen}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Tapped="stackAuthAgentText_Tapped"
+                        Visibility="Collapsed">
+                        <TextBlock
+                            x:Name="AuthAgentText"
+                            Padding="2"
+                            FontSize="15"
+                            FontWeight="Normal"
+                            Foreground="{StaticResource PaoSolidColorBrushDarkGreen}"
+                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.AuthAgentText)}"
+                            Visibility="Visible" />
+                    </StackPanel>
+                </StackPanel>
+                <!--  1  -->
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="0,5,2,4"
+                    Padding="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <StackPanel
+                        Margin="0,4,5,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                        <Ellipse Width="9" Height="9" />
+                    </StackPanel>
+                    <TextBlock
+                        x:Name="ErrorReportedIndicator"
+                        Margin="20,0,0,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        DoubleTapped="ErrorReportedIndicator_DoubleTapped"
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        FontSize="16"
+                        Foreground="{StaticResource PaoSolidColorBrushRed}"
+                        Text="&#xE7BA;"
+                        ToolTipService.ToolTip="An error was reported. Please contact IT Dept."
+                        Visibility="Collapsed" />
+                </StackPanel>
+                <!--  2  -->
+                <StackPanel
+                    Grid.Column="2"
+                    Margin="0,4,0,2"
+                    Padding="0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsDoubleTapEnabled="False"
+                    IsHoldingEnabled="False"
+                    IsRightTapEnabled="False"
+                    IsTapEnabled="False">
+                    <StackPanel
+                        x:Name="stackCancel"
+                        Margin="1,2,1,0"
+                        Padding="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        CornerRadius="4"
+                        Orientation="Horizontal"
+                        Visibility="Collapsed">
+
+                        <Button
+                            x:Name="CancelCall"
+                            ui:FrameworkElementExtensions.Cursor="Hand"
+                            Background="{StaticResource PaoSolidColorBrushBrick}"
+                            BorderThickness="0"
+                            Style="{StaticResource ButtonStyle1}"
+                            Tapped="CancelCall_Tapped">
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel>
+                                    <TextBlock
+                                        Margin="0,3,0,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                        FontSize="14"
+                                        Foreground="{StaticResource PaoSolidColorBrushWhite}"
+                                        IsDoubleTapEnabled="False"
+                                        IsHoldingEnabled="False"
+                                        IsRightTapEnabled="False"
+                                        IsTapEnabled="False"
+                                        Text="&#xE107;" />
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock
+                                        Margin="4,0,2,0"
+                                        FontSize="14"
+                                        Foreground="{StaticResource PaoSolidColorBrushWhite}"
+                                        IsDoubleTapEnabled="False"
+                                        IsHoldingEnabled="False"
+                                        IsRightTapEnabled="False"
+                                        IsTapEnabled="False"
+                                        Text="Cancel" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+                <!--  3  -->
+                <StackPanel
+                    x:Name="stackAgentStats"
+                    Grid.Column="3"
+                    MinWidth="40"
+                    Margin="20,6,0,2"
+                    Padding="0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    ui:FrameworkElementExtensions.Cursor="Hand"
+                    IsDoubleTapEnabled="False"
+                    IsHoldingEnabled="False"
+                    IsRightTapEnabled="False"
+                    IsTapEnabled="False">
+                    <TextBlock
+                        x:Name="AgentStatsLink"
+                        Margin="2,4,5,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        FontSize="20"
+                        Foreground="{StaticResource PaoSolidColorBrushOldBlue}"
+                        IsDoubleTapEnabled="False"
+                        IsHoldingEnabled="False"
+                        IsRightTapEnabled="False"
+                        IsTapEnabled="True"
+                        Tapped="AgentStatsLink_Tapped"
+                        Text="&#xE779;" />
+                </StackPanel>
+                <!--  4  -->
+                <StackPanel
+                    x:Name="stackAgentCounterStatusValue"
+                    Grid.Column="4"
+                    Margin="0,5,5,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center">
+                    <Button
+                        x:Name="AgentCounterStatusButton"
+                        Width="120"
+                        Margin="0"
+                        Padding="4"
+                        HorizontalAlignment="Center"
+                        ui:FrameworkElementExtensions.Cursor="Hand"
+                        Background="{StaticResource PaoSolidColorBrushOffBlue}"
+                        BorderBrush="{StaticResource PaoSolidColorBrushOffBlue}"
+                        BorderThickness="1"
+                        IsTapEnabled="True"
+                        Style="{StaticResource ButtonStyle1}"
+                        Tapped="AgentCounterStatus_Tapped">
+                        <TextBlock
+                            Margin="0"
+                            Padding="0"
+                            FontSize="15"
+                            IsDoubleTapEnabled="False"
+                            IsHoldingEnabled="False"
+                            IsRightTapEnabled="False"
+                            IsTapEnabled="False"
+                            Text="{Binding ElementName=AppUI, Path=(local:AgentDependencyClass.AppStatus)}" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="5"
+            Grid.Column="0"
+            Grid.ColumnSpan="6"
+            Margin="0,55,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+            <muxc:ProgressRing
+                x:Name="Progressindicator"
+                Width="60"
+                Height="60"
+                IsActive="False" />
+            <TextBlock
+                x:Name="ProgressIndicatorText"
+                Padding="2"
+                HorizontalAlignment="Center"
+                FontSize="19"
+                FontWeight="Bold"
+                TextWrapping="WrapWholeWords" />
+        </StackPanel>
+
+    </Grid>
+</Page>
